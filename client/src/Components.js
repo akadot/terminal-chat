@@ -93,7 +93,7 @@ export default class ComponentsBuilder {
       style: {
         fg: "yellow",
       },
-      items: ["{bold}Activity Log{/}"],
+      items: ["{bold}Users on Room{/}"],
     });
     return this;
   }
@@ -104,7 +104,7 @@ export default class ComponentsBuilder {
       parent: this.#layout,
       width: "25%",
       height: "90%",
-      items: ["{bold}Users on Room{/}"],
+      items: ["{bold}Activity Log{/}"],
     });
     return this;
   }

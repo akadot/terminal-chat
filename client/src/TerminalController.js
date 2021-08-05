@@ -1,4 +1,5 @@
 import ComponentsBuilder from "./Components.js";
+import { constants } from "./constants.js";
 
 export default class TerminalController {
   #userColor = new Map();
@@ -46,9 +47,33 @@ export default class TerminalController {
     };
   }
 
+  #onStatusChanged({ screen, status }) {
+    return (users) => {
+      const { content } = status.items.shift();
+      status.clearItems();
+      status.addItem(content);
+
+      users.forEach((userName) => {
+        const color = this.#getUserColor(userName);
+        status.addItem(`{${color}}{bold}${userName}{/}{/}`);
+      });
+      screen.render();
+    };
+  }
+
   #registerEvents(eventEmitter, component) {
-    eventEmitter.on("message:received", this.#onMessageRecieve(component));
-    eventEmitter.on("activityLog:updated", this.#onLogChanged(component));
+    eventEmitter.on(
+      constants.events.app.MSG_RECEIVED,
+      this.#onMessageRecieve(component)
+    );
+    eventEmitter.on(
+      constants.events.app.ACTIVITYLOG_UPDATED,
+      this.#onLogChanged(component)
+    );
+    eventEmitter.on(
+      constants.events.app.STATUS_UPDATED,
+      this.#onStatusChanged(component)
+    );
   }
 
   async initializeTable(eventEmitter) {
@@ -65,12 +90,5 @@ export default class TerminalController {
 
     components.input.focus();
     components.screen.render();
-
-    setInterval(() => {
-      eventEmitter.emit("activityLog:updated", "ghost left");
-      eventEmitter.emit("activityLog:updated", "dot left");
-      eventEmitter.emit("activityLog:updated", "creuza left");
-      eventEmitter.emit("activityLog:updated", "célia left");
-    }, 2000);
   }
 }
